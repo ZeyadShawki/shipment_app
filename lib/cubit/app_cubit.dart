@@ -44,6 +44,7 @@ class AppCubit extends Cubit<AppState> {
     FirebaseAuth.instance.
     createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
+          AppPrefreances().saveEmail(email);
         FirebaseFirestore.instance.collection('users').doc(username).set(
           {
             "email":email

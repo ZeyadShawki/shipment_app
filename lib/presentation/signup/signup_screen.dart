@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shipment_app/core/resources/Navigator_take_widget.dart';
 import 'package:shipment_app/presentation/login/login_screen.dart';
 
 import '../../cubit/app_cubit.dart';
+import '../home/home_screen.dart';
 
 class SignUpScreen extends StatelessWidget {
   SignUpScreen({Key? key}) : super(key: key);
@@ -18,7 +20,15 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if(state is SignUpSuccessState){
+          Fluttertoast.showToast(msg: "Signed Up Successfully");
+          NavigatorTakeWidget.navigatornoback(context, const HomeScreen());
+        }
+        if(state is SignUpErrorState){
+          Fluttertoast.showToast(msg: state.message);
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
@@ -122,6 +132,10 @@ class SignUpScreen extends StatelessWidget {
                     SizedBox(
                       height: 10.h,
                     ),
+                    if(state is SignUpLoadingState)...[
+                      const Center(child: CircularProgressIndicator(),)
+                    ]
+                    else...[
                     InkWell(
                       onTap: () {
                         if (_formState.currentState!.validate()) {
@@ -173,7 +187,7 @@ class SignUpScreen extends StatelessWidget {
                                   fontSize: 12.sp),
                             )),
                       ],
-                    )
+                    )],
                   ],
                 ),
               ),
