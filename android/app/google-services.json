@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1007871342888",
+    "project_id": "shipmentapp-60b17",
+    "storage_bucket": "shipmentapp-60b17.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1007871342888:android:577d2a99f072f173c2781d",
+        "android_client_info": {
+          "package_name": "com.example.shipment_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1007871342888-2fs2pko5t5enkdcnkd64i73ghv0787e1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.shipment_app",
+            "certificate_hash": "2638d904b3e4e0baddc9c2b29d1628d27d78eb9c"
+          }
+        },
+        {
+          "client_id": "1007871342888-0c6a1g0hqj2dcndbgjt42brhi3208d7k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7DGt9pXFQwTRDlyyZC-f62YAX7qaWMXU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1007871342888-0c6a1g0hqj2dcndbgjt42brhi3208d7k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
