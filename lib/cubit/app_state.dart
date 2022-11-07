@@ -24,3 +24,23 @@ class SignUpErrorState extends AppState {
   SignUpErrorState(this.message);
 
 }
+
+
+class ImageLoadingState extends AppState {}
+class ImageSuccessState extends AppState {}
+class ImageErrorState extends AppState {
+  final String message;
+
+  ImageErrorState(this.message);
+
+}
+
+
+class AddRecordLoadingState extends AppState {}
+class AddRecordSuccessState extends AppState {}
+class AddRecordErrorState extends AppState {
+  final String message;
+
+  AddRecordErrorState(this.message);
+
+}

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shipment_app/core/shared_prefrances/app_prefrances.dart';
 import 'package:shipment_app/cubit/app_cubit.dart';
+import 'package:shipment_app/presentation/home/home_screen.dart';
 import 'package:shipment_app/presentation/login/login_screen.dart';
 
 void main() async{
@@ -11,12 +12,18 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
    await AppPrefreances.init();
-  runApp(const MyApp());
+   Widget boot=LoginScreen();
+   // ignore: unrelated_type_equality_checks
+   if(AppPrefreances().getEmail()!=''){
+     boot=const HomeScreen();
+   }
+  runApp( MyApp(boot: boot,));
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
+   MyApp({super.key,required this.boot});
+  Widget boot;
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -30,7 +37,7 @@ class MyApp extends StatelessWidget {
 
                     primarySwatch: Colors.blue,
                   ),
-                  home: LoginScreen()
+                  home: boot
               ),
             ));
   }
