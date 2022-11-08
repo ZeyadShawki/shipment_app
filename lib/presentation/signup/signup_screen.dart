@@ -46,7 +46,7 @@ class SignUpScreen extends StatelessWidget {
           resizeToAvoidBottomInset: true,
           body: Padding(
             padding:
-                const EdgeInsets.symmetric(vertical: 60.0, horizontal: 20),
+                const EdgeInsets.only(top: 0.0,left: 20,right: 20),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child: Form(

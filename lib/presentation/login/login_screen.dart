@@ -41,7 +41,7 @@ class LoginScreen extends StatelessWidget {
           ),
           resizeToAvoidBottomInset: true,
           body: Padding(
-            padding: const EdgeInsets.only(top: 60.0, left: 20,right: 20),
+            padding: const EdgeInsets.only(top: 0.0, left: 20,right: 20),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               child:Form(

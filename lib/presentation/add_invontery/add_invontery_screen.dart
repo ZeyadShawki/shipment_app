@@ -21,9 +21,11 @@ class AddInvonteryScreen extends StatelessWidget {
       builder: (context, state) {
         if(state is GetRecordSuccessState) {
           return Scaffold(
+
           body: Padding(
             padding: const EdgeInsets.only(top: 40.0,right: 10,left: 10),
             child:  SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
               controller: _controller,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

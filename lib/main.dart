@@ -14,7 +14,7 @@ void main() async{
    await AppPrefreances.init();
    Widget boot=LoginScreen();
    // ignore: unrelated_type_equality_checks
-   if(AppPrefreances().getEmail()!=''){
+   if(await AppPrefreances().getEmail()!=''){
      boot=const HomeScreen();
    }
   runApp( MyApp(boot: boot,));
