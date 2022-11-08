@@ -20,7 +20,8 @@ class AddNewRecordScreen extends StatelessWidget {
     return BlocConsumer<AppCubit, AppState>(
       listener: (context, state) {
         if(state is AddRecordSuccessState){
-          NavigatorTakeWidget.navigatorwithback(context,AddInvonteryScreen());
+          Navigator.pop(context);
+          NavigatorTakeWidget.navigatornoback(context, AddInvonteryScreen());
         }
       },
       builder: (context, state) {

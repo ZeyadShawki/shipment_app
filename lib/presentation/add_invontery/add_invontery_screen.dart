@@ -49,12 +49,15 @@ class AddInvonteryScreen extends StatelessWidget {
                           ),
                       separatorBuilder: (context,index)=>SizedBox(height: 10.h,),
                       itemCount: state.records.length),]else...[
-                     Center(
-                       child: Text('No Items added yet',
-                         textAlign: TextAlign.start,
-                         style: TextStyle(
-                             color: Colors.blue,
-                             fontSize: 30.sp
+                     SizedBox(
+                       height: 400.h,
+                       child: Center(
+                         child: Text('No Items added yet',
+                           textAlign: TextAlign.start,
+                           style: TextStyle(
+                               color: Colors.blue,
+                               fontSize: 30.sp
+                           ),
                          ),
                        ),
                      ),
@@ -103,6 +106,7 @@ class AddInvonteryScreen extends StatelessWidget {
    required int quantity,
 }){
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Image(
             height: 120.h,
@@ -111,7 +115,6 @@ class AddInvonteryScreen extends StatelessWidget {
             image: NetworkImage(
           url
         ))  ,
-        SizedBox(width: 10.w,),
         Flexible(
           child: Text(
             name,
@@ -121,13 +124,14 @@ class AddInvonteryScreen extends StatelessWidget {
             ),
           ),
         ),
-        const Spacer(),
         Flexible(
-          child: Text(
-            'Quantity:${quantity.toString()}',
-            style: TextStyle(
-                color: Colors.black,
-                fontSize: 15.sp
+          child: FittedBox(
+            child: Text(
+              'Quantity:${quantity.toString()}',
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16.sp
+              ),
             ),
           ),
         ),

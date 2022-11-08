@@ -3,8 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shipment_app/core/resources/Navigator_take_widget.dart';
-import 'package:shipment_app/presentation/login/login_screen.dart';
 
 import '../../cubit/app_cubit.dart';
 import '../home/home_screen.dart';
@@ -23,7 +21,7 @@ class SignUpScreen extends StatelessWidget {
       listener: (context, state) {
         if(state is SignUpSuccessState){
           Fluttertoast.showToast(msg: "Signed Up Successfully");
-          NavigatorTakeWidget.navigatornoback(context, const HomeScreen());
+          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context)=>const HomeScreen()), (route) => false);
         }
         if(state is SignUpErrorState){
           Fluttertoast.showToast(msg: state.message);
@@ -82,7 +80,7 @@ class SignUpScreen extends StatelessWidget {
                         prefixIcon: Icon(Icons.account_circle),
                       ),
                       validator: (String? value) {
-                        if (value!.isEmpty) return 'Email should not be empty';
+                        if (value!.isEmpty) return 'UserName should not be empty';
                         return null;
                       },
                       onSaved: (value) {
@@ -176,8 +174,7 @@ class SignUpScreen extends StatelessWidget {
                         ),
                         TextButton(
                             onPressed: () {
-                              NavigatorTakeWidget.navigatorwithback(
-                                  context, LoginScreen());
+                             Navigator.pop(context);
                             },
                             child: Text(
                               'Login',
