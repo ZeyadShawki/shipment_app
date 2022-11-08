@@ -8,7 +8,7 @@ class RecordModel{
     required this.quantity
 });
 
-  RecordModel fromJson(Map<String,dynamic> json){
+ static RecordModel fromJson(Map<String,dynamic> json){
     return RecordModel(
     image: json["image"],
     name: json["name"],

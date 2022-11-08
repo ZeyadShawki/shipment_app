@@ -16,7 +16,7 @@ class HomeScreen extends StatelessWidget {
           children: [
             InkWell(
               onTap: (){
-                NavigatorTakeWidget.navigatorwithback(context, const AddInvonteryScreen());
+                NavigatorTakeWidget.navigatorwithback(context,  AddInvonteryScreen());
 
               },
               child: Container(

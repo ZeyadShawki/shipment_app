@@ -101,6 +101,21 @@ class AppCubit extends Cubit<AppState> {
 
     });
   }
+  void getRecords(){
+    List<RecordModel> records=[];
+
+    emit(GetRecordLoadingState());
+    FirebaseFirestore.instance.collection('inventory').get().then((value) {
+      for(int i=0;i<value.docs.length;i++){
+        records.add(RecordModel.fromJson(value.docs[i].data()));
+      }
+      emit(GetRecordSuccessState(
+        records
+      ));
+    }).catchError((e){
+      emit(GetRecordErrorState(e.toString()));
+    });
+  }
 
 
 }

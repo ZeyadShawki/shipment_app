@@ -44,3 +44,16 @@ class AddRecordErrorState extends AppState {
   AddRecordErrorState(this.message);
 
 }
+
+class  GetRecordLoadingState extends AppState {}
+// ignore: must_be_immutable
+class  GetRecordSuccessState extends AppState {
+  List<RecordModel> records;
+  GetRecordSuccessState(this.records);
+}
+class  GetRecordErrorState extends AppState {
+  final String message;
+
+  GetRecordErrorState(this.message);
+
+}

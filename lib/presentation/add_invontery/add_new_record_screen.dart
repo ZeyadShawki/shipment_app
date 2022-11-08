@@ -3,8 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shipment_app/core/resources/Navigator_take_widget.dart';
 import 'package:shipment_app/cubit/app_cubit.dart';
 import 'package:shipment_app/model/record_model.dart';
+import 'package:shipment_app/presentation/add_invontery/add_invontery_screen.dart';
 
 class AddNewRecordScreen extends StatelessWidget {
   final TextEditingController _name=TextEditingController();
@@ -16,7 +19,9 @@ class AddNewRecordScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AppCubit, AppState>(
       listener: (context, state) {
-        // TODO: implement listener
+        if(state is AddRecordSuccessState){
+          NavigatorTakeWidget.navigatorwithback(context,AddInvonteryScreen());
+        }
       },
       builder: (context, state) {
         return Scaffold(
@@ -86,6 +91,8 @@ class AddNewRecordScreen extends StatelessWidget {
                                   image: context.read<AppCubit>().url.toString(),
                                   name: _name.text,
                                   quantity: num.toInt()));
+                        }else{
+                          Fluttertoast.showToast(msg: 'Please make sure you added all requierments');
                         }
                       }
                       ,
