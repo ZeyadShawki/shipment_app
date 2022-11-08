@@ -21,7 +21,7 @@ class SignUpScreen extends StatelessWidget {
       listener: (context, state) {
         if(state is SignUpSuccessState){
           Fluttertoast.showToast(msg: "Signed Up Successfully");
-          Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (BuildContext context)=>const HomeScreen()), (route) => false);
+          Navigator.of(context).pushAndRemoveUntil( MaterialPageRoute(builder: (BuildContext context)=>const HomeScreen()), (route) => false);
         }
         if(state is SignUpErrorState){
           Fluttertoast.showToast(msg: state.message);
