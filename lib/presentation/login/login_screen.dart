@@ -73,11 +73,11 @@ class LoginScreen extends StatelessWidget {
                       controller: _username,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'UserName',
+                        labelText: 'Username',
                         prefixIcon: Icon(Icons.account_circle),
                       ),
                       validator: (String? value) {
-                        if (value!.isEmpty) return 'Email should not be empty';
+                        if (value!.isEmpty) return 'Username should not be empty';
                         return null;
                       },
                       onSaved: (value) {

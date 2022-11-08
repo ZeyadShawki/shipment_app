@@ -76,11 +76,11 @@ class SignUpScreen extends StatelessWidget {
                       controller: _usernameCont,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'UserName',
+                        labelText: 'Username',
                         prefixIcon: Icon(Icons.account_circle),
                       ),
                       validator: (String? value) {
-                        if (value!.isEmpty) return 'UserName should not be empty';
+                        if (value!.isEmpty) return 'Username should not be empty';
                         return null;
                       },
                       onSaved: (value) {
@@ -94,7 +94,7 @@ class SignUpScreen extends StatelessWidget {
                       controller: _emailCont,
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'Email Adress',
+                        labelText: 'Email Address',
                         prefixIcon: Icon(Icons.email),
                       ),
                       validator: (String? value) {
