@@ -47,8 +47,13 @@ class AppCubit extends Cubit<AppState> {
   void signUp(
       {required String email,
       required String password,
-      required String username}) {
+      required String username})async {
     emit(SignUpLoadingState());
+   final reponse=await FirebaseFirestore.instance.collection('users').doc(username).get();
+    if(reponse.exists){
+      emit(SignUpErrorState('Username is already taken please try other username'));
+      return;
+    }
     FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password)
         .then((value) {
@@ -91,8 +96,8 @@ class AppCubit extends Cubit<AppState> {
 
   void addRecord(RecordModel model)async{
     emit(AddRecordLoadingState());
-    FirebaseFirestore.instance.collection('inventory')
-        .doc(model.name).set(model.toJson(model))
+    final String? email=await AppPrefreances().getEmail();
+    FirebaseFirestore.instance.collection('inventory').doc(email).collection('products').doc(model.name).set(model.toJson(model))
         .then((value) {
       emit(AddRecordSuccessState());
 
@@ -101,11 +106,12 @@ class AppCubit extends Cubit<AppState> {
 
     });
   }
-  void getRecords(){
+  void getRecords()async{
     List<RecordModel> records=[];
+    final String? email=await AppPrefreances().getEmail();
 
     emit(GetRecordLoadingState());
-    FirebaseFirestore.instance.collection('inventory').get().then((value) {
+    FirebaseFirestore.instance.collection('inventory').doc(email).collection('products').get().then((value) {
       for(int i=0;i<value.docs.length;i++){
         records.add(RecordModel.fromJson(value.docs[i].data()));
       }
