@@ -132,13 +132,31 @@ class AppCubit extends Cubit<AppState> {
      final List<OrderModel> orders=[];
      final snap=response.docs;
      for(int i=0;i<snap.length;i++){
-       orders.add(OrderModel.fromJson(snap[0].data()));
+       orders.add(OrderModel.fromJson(snap[i].data()));
        emit(GetOrderSuccessState(orders));
      }
 
    }else{
      emit(GetOrderErrorState('No Orders Added yet'));
    }
+
+  }
+
+  void addOrders({
+    required String name,
+    required OrderModel model
+})async{
+    emit(AddOrderLoadingState());
+    final String? email=await AppPrefreances().getEmail();
+
+    FirebaseFirestore.instance.collection('inventory').doc(email).collection('products').doc(name).collection('orders').doc().set(
+      OrderModel.toJson(model)
+    ).then((value) {
+      emit(AddOrderSuccessState());
+    }).catchError((e){
+      emit(AddOrderErrorState(e.toString()));
+
+    });
 
   }
 

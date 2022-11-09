@@ -86,7 +86,13 @@ class AddNewRecordScreen extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         if(_formKey.currentState!.validate()&&context.read<AppCubit>().url!=null){
-                          var num=int.parse(_quantity.text.split('.').first);
+                          int num;
+                         try{
+                            num=int.parse(_quantity.text.split('.').first);
+                         }on FormatException catch (_){
+                           Fluttertoast.showToast(msg: 'please check quantity number');
+                              return ;
+                         }
                           context.read<AppCubit>().addRecord(
                               RecordModel(
                                   image: context.read<AppCubit>().url.toString(),
