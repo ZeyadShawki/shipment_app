@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shipment_app/core/shared_prefrances/app_prefrances.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:shipment_app/model/order_model.dart';
 import 'package:shipment_app/model/record_model.dart';
 
 part 'app_state.dart';
@@ -121,6 +122,24 @@ class AppCubit extends Cubit<AppState> {
     }).catchError((e){
       emit(GetRecordErrorState(e.toString()));
     });
+  }
+
+ void getOrders(String name)async{
+    emit(GetOrderLoadingState());
+   final String? email=await AppPrefreances().getEmail();
+  final response=await FirebaseFirestore.instance.collection('inventory').doc(email).collection('products').doc(name).collection('orders').get();
+   if(response.size!=0){
+     final List<OrderModel> orders=[];
+     final snap=response.docs;
+     for(int i=0;i<snap.length;i++){
+       orders.add(OrderModel.fromJson(snap[0].data()));
+       emit(GetOrderSuccessState(orders));
+     }
+
+   }else{
+     emit(GetOrderErrorState('No Orders Added yet'));
+   }
+
   }
 
 

@@ -57,3 +57,16 @@ class  GetRecordErrorState extends AppState {
   GetRecordErrorState(this.message);
 
 }
+
+class GetOrderLoadingState extends AppState {}
+// ignore: must_be_immutable
+class GetOrderSuccessState extends AppState {
+  List<OrderModel> orders;
+  GetOrderSuccessState(this.orders);
+}
+class GetOrderErrorState extends AppState {
+  final String message;
+
+  GetOrderErrorState(this.message);
+
+}

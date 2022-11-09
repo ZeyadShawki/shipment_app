@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shipment_app/core/resources/Navigator_take_widget.dart';
 import 'package:shipment_app/cubit/app_cubit.dart';
 import 'package:shipment_app/presentation/add_invontery/add_new_record_screen.dart';
+import 'package:shipment_app/presentation/add_invontery/order_screen.dart';
 
 class AddInvonteryScreen extends StatelessWidget {
    AddInvonteryScreen({Key? key}) : super(key: key);
@@ -42,10 +43,18 @@ class AddInvonteryScreen extends StatelessWidget {
                      controller: _controller,
                       shrinkWrap: true,
                       itemBuilder: (context,index)=>
-                          item(
-                              url: state.records[index].image,
-                              name: state.records[index].name,
-                              quantity: state.records[index].quantity,
+                          InkWell(
+                            onTap: (){
+                              NavigatorTakeWidget.navigatorwithback(context, OrderScreen(
+                                image: state.records[index].image,
+                                name: state.records[index].name,
+                              ));
+                            },
+                            child: item(
+                                url: state.records[index].image,
+                                name: state.records[index].name,
+                                quantity: state.records[index].quantity,
+                            ),
                           ),
                       separatorBuilder: (context,index)=>SizedBox(height: 10.h,),
                       itemCount: state.records.length),]else...[
