@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shipment_app/core/resources/Navigator_take_widget.dart';
 import 'package:shipment_app/cubit/app_cubit.dart';
+import 'package:shipment_app/presentation/add_invontery/add_order_screen.dart';
 
 class OrderScreen extends StatelessWidget {
    OrderScreen({Key? key,required this.image, required this.name}) : super(key: key);
@@ -74,7 +76,7 @@ class OrderScreen extends StatelessWidget {
                     controller: _controller,
                       shrinkWrap: true,
                       itemBuilder: (context,index){
-                        return  orderItem(
+                        return   orderItem(
                             platform: state.orders[index].platform,
                             orderId: state.orders[index].orderId,
                             trackingId: state.orders[index].trackingId,
@@ -85,10 +87,10 @@ class OrderScreen extends StatelessWidget {
                       itemCount: state.orders.length),
                   SizedBox(height: 10.h,),
                   InkWell(
-                    onTap: (){
-
-                    },
-                    child: const Center(
+                    onTap: ()=>NavigatorTakeWidget.navigatorwithback(context, AddOrderScreen(
+                      image: image,
+                        name:name
+                    )), child: const Center(
                       child: CircleAvatar(
 
                         child: Icon(
@@ -99,6 +101,7 @@ class OrderScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  SizedBox(height: 10.h,),
                 ],
               ),
             ),
@@ -153,7 +156,7 @@ class OrderScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 10.h,),
                     SizedBox(
-                      height: 400.h,
+                      height: 200.h,
                       child:  Center(
                         child: RichText(
                           textAlign: TextAlign.center,
@@ -170,7 +173,22 @@ class OrderScreen extends StatelessWidget {
                                 ),],)
                         ),
                       ),
-                    )
+                    ),
+                    InkWell(
+                      onTap: ()=>NavigatorTakeWidget.navigatorwithback(context, AddOrderScreen(
+                        image: image,
+                          name:name
+                      )), child: const Center(
+                      child: CircleAvatar(
+
+                        child: Icon(
+
+                          Icons.add,
+                          size: 40,
+                        ),
+                      ),
+                    ),
+                    ),
 
                   ],
                 ),
@@ -195,7 +213,7 @@ class OrderScreen extends StatelessWidget {
          Flexible(
           child:  FittedBox(
             child: Text(
-              "platfrom:$platform , ",
+              "platfrom:$platform ,",
               style: TextStyle(
                   color: Colors.black,
                   fontSize: 15.sp
@@ -206,7 +224,7 @@ class OrderScreen extends StatelessWidget {
           Flexible(
             child:  FittedBox(
               child: Text(
-                "orderId:$orderId , ",
+                "orderId:$orderId ,",
                 style: TextStyle(
                     color: Colors.black,
                     fontSize: 15.sp

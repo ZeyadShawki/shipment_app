@@ -70,3 +70,13 @@ class GetOrderErrorState extends AppState {
   GetOrderErrorState(this.message);
 
 }
+
+
+class AddOrderLoadingState extends AppState {}
+class AddOrderSuccessState extends AppState {}
+class AddOrderErrorState extends AppState {
+  final String message;
+
+  AddOrderErrorState(this.message);
+
+}
