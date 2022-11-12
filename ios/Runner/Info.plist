@@ -16,8 +16,12 @@
 	<string>shipment_app</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>NSCameraUsageDescription</key>
+	<string>The app required camera permission to scan QR codes</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -48,10 +52,8 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSPhotoLibraryUsageDescription</key>
-    	<true/>
-    	<key>NSCameraUsageDescription</key>
-            	<true/>
-            	<key>NSMicrophoneUsageDescription</key>
-                            	<true/>
+	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<true/>
 </dict>
 </plist>
