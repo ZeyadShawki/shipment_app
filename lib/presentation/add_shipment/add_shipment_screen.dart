@@ -3,9 +3,12 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shipment_app/core/extensions/string_extension.dart';
-import 'package:shipment_app/main.dart';
+
+import '../../cubit/app_cubit.dart';
 
 class AddShipmentScreen extends StatefulWidget {
   const AddShipmentScreen({Key? key}) : super(key: key);
@@ -147,10 +150,21 @@ class _AddShipmentScreenState extends State<AddShipmentScreen> {
     setState(() {
       this.controller = controller;
     });
-    controller.scannedDataStream.listen((scanData) {
+    controller.scannedDataStream.listen((scanData) async {
       setState(() {
         result = scanData;
       });
+       this.controller!.pauseCamera();
+      final bool = await context.read<AppCubit>().checkInvontry(
+          code: result!.code.getCode(), type: result!.code.getType()
+      );
+      if (bool) {
+        Fluttertoast.showToast(msg: "Added quantity successfuly");
+      } else {
+        Fluttertoast.showToast(
+            msg: "not found item with this tracking id or name");
+      }
+
     });
   }
 

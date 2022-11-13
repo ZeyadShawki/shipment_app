@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shipment_app/core/extensions/string_extension.dart';
 import 'package:shipment_app/core/resources/Navigator_take_widget.dart';
+import 'package:shipment_app/cubit/app_cubit.dart';
 import 'package:shipment_app/presentation/add_invontery/add_invontery_screen.dart';
 import 'package:shipment_app/presentation/add_shipment/add_shipment_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -84,10 +87,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             ScanMode.BARCODE,
                           );
 
-                          setState(() {
-                            code = barcodeScanRes.getCode();
-                            type = barcodeScanRes.getType();
-                          });
+                          code = barcodeScanRes.getCode();
+                          type = barcodeScanRes.getType();
+                          if (mounted)
+                          {
+                            final bool=await context.read<AppCubit>().checkInvontry(code: code, type: type);
+                            if(bool){
+                              Fluttertoast.showToast(msg: "Added quantity successfuly");
+                            }else{
+                              Fluttertoast.showToast(msg: "not found item with this tracking id or name");
+                            }
+                          }
+
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 20),

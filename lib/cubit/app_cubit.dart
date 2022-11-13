@@ -160,5 +160,32 @@ class AppCubit extends Cubit<AppState> {
 
   }
 
+  Future<bool> checkInvontry({
+   required String code,
+    required String type
+          })async{
+     final email=await AppPrefreances().getEmail();
+   final snap = await  FirebaseFirestore.instance.
+     collection('inventory').doc(email).
+     collection("products").doc(type).collection("orders").where('trackingId',isEqualTo: code).get();
+    if(snap.size!=0){
+
+     FirebaseFirestore.instance.collection('inventory').doc(email).
+      collection("products").doc(type).get().then((value) {
+
+       FirebaseFirestore.instance.collection('inventory').doc(email).
+       collection("products").doc(type).set({
+         "image":value.data()!["image"],
+         "name":value.data()!["name"],
+         "quantity":(value.data()!["quantity"])+1
+       });
+
+    });
+     return true;
+         }
+    return false;
+  
+  }
+
 
 }
