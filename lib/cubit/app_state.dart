@@ -80,3 +80,14 @@ class AddOrderErrorState extends AppState {
   AddOrderErrorState(this.message);
 
 }
+
+
+
+class EditOrderLoadingState extends AppState {}
+class EditOrderSuccessState extends AppState {}
+class EditOrderErrorState extends AppState {
+  final String message;
+
+  EditOrderErrorState(this.message);
+
+}

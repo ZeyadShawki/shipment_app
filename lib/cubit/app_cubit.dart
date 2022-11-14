@@ -160,6 +160,40 @@ class AppCubit extends Cubit<AppState> {
 
   }
 
+  void editOrder({
+    required String oldPlatform,
+   required String oldOrderId,
+    required String oldTrackingId,
+    required String name,
+    required String newOrderId,
+    required String newTrackingId,
+    required String newPlatform,
+    required bool deliveryStatus,
+})async{
+    emit(EditOrderLoadingState());
+    final email=await AppPrefreances().getEmail();
+   await FirebaseFirestore.instance.collection("inventory").doc(email)
+    .collection('products').doc(name).collection('orders')
+        .where('orderId',isEqualTo: oldOrderId).where('trackingId',isEqualTo: oldTrackingId).where('platform',isEqualTo: oldPlatform)
+       .get().then((value) {
+      FirebaseFirestore.instance.collection("inventory").doc(email)
+          .collection('products').doc(name).collection('orders').doc(value.docs[0].id).set({
+        'orderId':newOrderId,
+        'trackingId':newTrackingId,
+        'platform':newPlatform,
+        'deliveryStatus':deliveryStatus
+      });
+      emit(EditOrderSuccessState());
+    }).catchError((e){
+      emit(EditOrderErrorState(e.toString()));
+    });
+
+
+
+  }
+
+
+
   Future<bool> checkInvontry({
    required String code,
     required String type
@@ -167,7 +201,8 @@ class AppCubit extends Cubit<AppState> {
      final email=await AppPrefreances().getEmail();
    final snap = await  FirebaseFirestore.instance.
      collection('inventory').doc(email).
-     collection("products").doc(type).collection("orders").where('trackingId',isEqualTo: code).get();
+     collection("products").doc(type).collection("orders")
+        .where('trackingId',isEqualTo: code).get();
     if(snap.size!=0){
 
      FirebaseFirestore.instance.collection('inventory').doc(email).

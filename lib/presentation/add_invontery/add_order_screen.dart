@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shipment_app/core/extension/is_numric_fun.dart';
 import 'package:shipment_app/core/resources/Navigator_take_widget.dart';
 import 'package:shipment_app/model/order_model.dart';
 import 'package:shipment_app/presentation/add_invontery/order_screen.dart';
@@ -63,14 +62,14 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
               SizedBox(height: 10.h,),
               TextFormField(
                 controller: _orderIdCont,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.name,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Order Id',
                 ),
                 validator: (String? value) {
 
-                  if (value!.isEmpty&&value.isNumeric(value.toString())) return 'Order Id should not be empty and be number';
+                  if (value!.isEmpty) return 'Order Id should not be empty and be number';
                   return null;
                 },
                 onSaved: (value) {
@@ -81,13 +80,13 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
 
               TextFormField(
                 controller: _trackIdCont,
-                keyboardType: TextInputType.number,
+                keyboardType: TextInputType.name,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Track Id',
                 ),
                 validator: (String? value) {
-                  if (value!.isEmpty&&value.isNumeric(value.toString())) {
+                  if (value!.isEmpty) {
                     return 'Track Id should not be empty and be number';
                   }
                   return null;
@@ -146,13 +145,13 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
               InkWell(
                 onTap: () {
 
-                  if(_formKey.currentState!.validate()&&_trackIdCont.text.isNumeric(_trackIdCont.text)&&_orderIdCont.text.isNumeric(_orderIdCont.text)){
+                  if(_formKey.currentState!.validate()){
                      context.read<AppCubit>().addOrders(
                          name: widget.name,
                          model: OrderModel(
                              platform: _platCont.text,
-                             orderId: _orderIdCont.text.split('.').first,
-                             trackingId: _trackIdCont.text.split('.').first,
+                             orderId: _orderIdCont.text,
+                             trackingId: _trackIdCont.text,
                              deliveryStatus: _dilveryStatus));
 
 

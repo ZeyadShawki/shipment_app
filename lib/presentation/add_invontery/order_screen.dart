@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shipment_app/core/resources/Navigator_take_widget.dart';
 import 'package:shipment_app/cubit/app_cubit.dart';
 import 'package:shipment_app/presentation/add_invontery/add_order_screen.dart';
+import 'package:shipment_app/presentation/add_invontery/edit_order_screen.dart';
 
 class OrderScreen extends StatelessWidget {
    OrderScreen({Key? key,required this.image, required this.name}) : super(key: key);
@@ -76,11 +77,23 @@ class OrderScreen extends StatelessWidget {
                     controller: _controller,
                       shrinkWrap: true,
                       itemBuilder: (context,index){
-                        return   orderItem(
-                            platform: state.orders[index].platform,
-                            orderId: state.orders[index].orderId,
-                            trackingId: state.orders[index].trackingId,
-                            dilvered: state.orders[index].deliveryStatus
+                        return   InkWell(
+                          onTap: (){
+                            NavigatorTakeWidget.navigatorwithback(context, EditOrderScreen
+                              (
+                                name: name,
+                                image: image,
+                                oldTrackingId: state.orders[index].trackingId,
+                                oldOrderId: state.orders[index].orderId,
+
+                                oldPlatform: state.orders[index].platform));
+                          },
+                          child: orderItem(
+                              platform: state.orders[index].platform,
+                              orderId: state.orders[index].orderId,
+                              trackingId: state.orders[index].trackingId,
+                              dilvered: state.orders[index].deliveryStatus
+                          ),
                         );
                       },
                       separatorBuilder: (context,index)=>SizedBox(height: 10.h,),
