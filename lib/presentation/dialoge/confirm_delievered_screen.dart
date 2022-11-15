@@ -53,10 +53,10 @@ class ConfirmDelieveredScreen extends StatelessWidget {
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
+                      SizedBox(
                         height: 100,
                         width: 100,
-                        color: Colors.red,
+                        child: Image.network(recordModel.image),
                       ),
                       const SizedBox(height: 10),
                       Text(recordModel.name),

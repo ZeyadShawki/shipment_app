@@ -180,13 +180,12 @@ class AppCubit extends Cubit<AppState> {
     });
   }
 
-  void editOrder({
-    required String oldPlatform,
-    required String oldOrderId,
-    required String oldTrackingId,
-    required String name,
-    required OrderModel model
-  }) async {
+  void editOrder(
+      {required String oldPlatform,
+      required String oldOrderId,
+      required String oldTrackingId,
+      required String name,
+      required OrderModel model}) async {
     emit(EditOrderLoadingState());
     final email = await AppPrefreances().getEmail();
     await FirebaseFirestore.instance
@@ -217,9 +216,8 @@ class AppCubit extends Cubit<AppState> {
   void checkInvontry({required String code}) async {
     emit(ScanOrderLoadingState());
     try {
-
       final email = await AppPrefreances().getEmail();
-      QuerySnapshot<Map<String, dynamic>>? snap;
+      List<OrderModel> orders = [];
       await FirebaseFirestore.instance
           .collection('inventory')
           .doc(email)
@@ -228,22 +226,27 @@ class AppCubit extends Cubit<AppState> {
           .then(
         (products) async {
           for (var product in products.docs) {
-            snap = await FirebaseFirestore.instance
+            await FirebaseFirestore.instance
                 .collection("inventory")
                 .doc(email)
                 .collection('products')
                 .doc(product.id.toString())
                 .collection('orders')
                 .where('trackingId', isEqualTo: code)
-                .orderBy('orderDate', descending: true)
-                .get();
+                .get()
+                .then((orderDocs) {
+              final ordersDocuments = orderDocs.docs;
+              for (var order in ordersDocuments) {
+                final data = order.data();
+                orders.add(OrderModel.fromJson(data));
+              }
+            });
           }
         },
       );
-      log(snap!.docs.length.toString());
-      if (snap!.docs.isNotEmpty) {
-        final firstItem = snap!.docs[0].data();
-        final model = OrderModel.fromJson(firstItem);
+      orders.sort();
+      if (orders.isNotEmpty) {
+        final model = orders[0];
         final secondModel = await FirebaseFirestore.instance
             .collection('inventory')
             .doc(email)
@@ -265,20 +268,24 @@ class AppCubit extends Cubit<AppState> {
   void markAsDeleivered(bool isDeleivered, OrderModel model) async {
     emit(DeliveryStatusLoadingState());
     try {
-       final email=await AppPrefreances().getEmail();
-      if(isDeleivered){
-        FirebaseFirestore.instance.
-        collection('inventory').doc(email)
-            .collection('products').doc(model.name)
-            .get().then((value) {
-
-          FirebaseFirestore.instance.
-          collection('inventory').doc(email)
-              .collection('products').doc(model.name)
+      final email = await AppPrefreances().getEmail();
+      if (isDeleivered) {
+        FirebaseFirestore.instance
+            .collection('inventory')
+            .doc(email)
+            .collection('products')
+            .doc(model.name)
+            .get()
+            .then((value) {
+          FirebaseFirestore.instance
+              .collection('inventory')
+              .doc(email)
+              .collection('products')
+              .doc(model.name)
               .update({
-            'quantity':(value.data()!['quantity'] + int.parse(model.orderQuantity)),
+            'quantity':
+                (value.data()!['quantity'] + int.parse(model.orderQuantity)),
           });
-
         });
 
         await FirebaseFirestore.instance
@@ -300,7 +307,6 @@ class AppCubit extends Cubit<AppState> {
               .doc(value.docs[0].id)
               .update({'deliveryStatus': isDeleivered});
         });
-
       }
 
       emit(DeliveryStatusSuccessState());

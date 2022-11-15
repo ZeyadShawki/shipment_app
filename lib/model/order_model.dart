@@ -1,4 +1,6 @@
-class OrderModel {
+import 'package:intl/intl.dart';
+
+class OrderModel implements Comparable<OrderModel> {
   String platform;
   String orderId;
   String trackingId;
@@ -38,5 +40,13 @@ class OrderModel {
       'orderQuantity': model.orderQuantity,
       'name': model.name,
     };
+  }
+
+  @override
+  int compareTo(OrderModel other) {
+    DateFormat format = DateFormat("dd-MM-yyyy");
+    final thisTime = format.parse(orderDate);
+    final otherDate = format.parse(other.orderDate);
+    return thisTime.compareTo(otherDate);
   }
 }
