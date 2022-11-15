@@ -185,10 +185,7 @@ class AppCubit extends Cubit<AppState> {
     required String oldOrderId,
     required String oldTrackingId,
     required String name,
-    required String newOrderId,
-    required String newTrackingId,
-    required String newPlatform,
-    required bool deliveryStatus,
+    required OrderModel model
   }) async {
     emit(EditOrderLoadingState());
     final email = await AppPrefreances().getEmail();
@@ -210,12 +207,7 @@ class AppCubit extends Cubit<AppState> {
           .doc(name)
           .collection('orders')
           .doc(value.docs[0].id)
-          .set({
-        'orderId': newOrderId,
-        'trackingId': newTrackingId,
-        'platform': newPlatform,
-        'deliveryStatus': deliveryStatus
-      });
+          .set(OrderModel.toJson(model));
       emit(EditOrderSuccessState());
     }).catchError((e) {
       emit(EditOrderErrorState(e.toString()));
@@ -225,7 +217,7 @@ class AppCubit extends Cubit<AppState> {
   void checkInvontry({required String code}) async {
     emit(ScanOrderLoadingState());
     try {
-      final testCode = '111';
+
       final email = await AppPrefreances().getEmail();
       QuerySnapshot<Map<String, dynamic>>? snap;
       await FirebaseFirestore.instance
@@ -242,7 +234,7 @@ class AppCubit extends Cubit<AppState> {
                 .collection('products')
                 .doc(product.id.toString())
                 .collection('orders')
-                .where('trackingId', isEqualTo: testCode)
+                .where('trackingId', isEqualTo: code)
                 .orderBy('orderDate', descending: true)
                 .get();
           }
@@ -273,46 +265,43 @@ class AppCubit extends Cubit<AppState> {
   void markAsDeleivered(bool isDeleivered, OrderModel model) async {
     emit(DeliveryStatusLoadingState());
     try {
-      if (isDeleivered) {
+       final email=await AppPrefreances().getEmail();
+      if(isDeleivered){
+        FirebaseFirestore.instance.
+        collection('inventory').doc(email)
+            .collection('products').doc(model.name)
+            .get().then((value) {
+
+          FirebaseFirestore.instance.
+          collection('inventory').doc(email)
+              .collection('products').doc(model.name)
+              .update({
+            'quantity':(value.data()!['quantity'] + int.parse(model.orderQuantity)),
+          });
+
+        });
+
         await FirebaseFirestore.instance
             .collection('inventory')
             .doc(email)
             .collection("products")
             .doc(model.name)
+            .collection('orders')
+            .where('trackingId', isEqualTo: model.trackingId)
+            .where('orderDate', isEqualTo: model.orderDate)
             .get()
             .then((value) {
-          print(value.data());
           FirebaseFirestore.instance
               .collection('inventory')
               .doc(email)
               .collection("products")
               .doc(model.name)
-              .update({
-            'quantity':
-                value.data()!['quantity'] + int.parse(model.orderQuantity)
-          });
+              .collection('orders')
+              .doc(value.docs[0].id)
+              .update({'deliveryStatus': isDeleivered});
         });
+
       }
-      log('Found');
-      await FirebaseFirestore.instance
-          .collection('inventory')
-          .doc(email)
-          .collection("products")
-          .doc(model.name)
-          .collection('orders')
-          .where('trackingId', isEqualTo: model.trackingId)
-          .where('orderDate', isEqualTo: model.orderDate)
-          .get()
-          .then((value) {
-        FirebaseFirestore.instance
-            .collection('inventory')
-            .doc(email)
-            .collection("products")
-            .doc(model.name)
-            .collection('orders')
-            .doc(value.docs[0].id)
-            .update({'deliveryStatus': isDeleivered});
-      });
 
       emit(DeliveryStatusSuccessState());
     } catch (e) {

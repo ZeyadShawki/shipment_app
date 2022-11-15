@@ -82,7 +82,10 @@ class OrderScreen extends StatelessWidget {
                                           state.orders[index].trackingId,
                                       oldOrderId: state.orders[index].orderId,
                                       oldPlatform:
-                                          state.orders[index].platform));
+                                          state.orders[index].platform,
+                                   quantity: state.orders[index].orderQuantity,
+
+                                  ));
                             },
                             child: orderItem(
                                 platform: state.orders[index].platform,
