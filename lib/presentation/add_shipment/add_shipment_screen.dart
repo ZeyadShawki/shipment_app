@@ -9,6 +9,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:shipment_app/core/extensions/string_extension.dart';
 
 import '../../cubit/app_cubit.dart';
+import '../dialoge/confirm_delievered_screen.dart';
 
 class AddShipmentScreen extends StatefulWidget {
   const AddShipmentScreen({Key? key}) : super(key: key);
@@ -35,92 +36,108 @@ class _AddShipmentScreenState extends State<AddShipmentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(flex: 4, child: _buildQrView(context)),
-          Expanded(
-            flex: 1,
-            child: FittedBox(
-              fit: BoxFit.contain,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  if (result != null)
-                    Text(
-                        'Barcode Type: ${result!.code.getType()}   Data: ${result!.code.getCode()}')
-                  else
-                    const Text('Scan a code'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller?.toggleFlash();
-                              setState(() {});
-                            },
-                            child: FutureBuilder(
-                              future: controller?.getFlashStatus(),
-                              builder: (context, snapshot) {
-                                return Text('Flash: ${snapshot.data}');
-                              },
-                            )),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller?.flipCamera();
-                              setState(() {});
-                            },
-                            child: FutureBuilder(
-                              future: controller?.getCameraInfo(),
-                              builder: (context, snapshot) {
-                                if (snapshot.data != null) {
-                                  return Text(
-                                      'Camera facing ${describeEnum(snapshot.data!)}');
-                                } else {
-                                  return const Text('loading');
-                                }
-                              },
-                            )),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            await controller?.pauseCamera();
-                          },
-                          child: const Text('pause',
-                              style: TextStyle(fontSize: 20)),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(8),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            await controller?.resumeCamera();
-                          },
-                          child: const Text('resume',
-                              style: TextStyle(fontSize: 20)),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
+    return BlocListener<AppCubit, AppState>(
+      listener: (context, state) {
+        if (state is ScanOrderSuccessState) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ConfirmDelieveredScreen(
+                orderModel: state.orderModel,
+                recordModel: state.recordModel,
               ),
             ),
-          )
-        ],
+          );
+        } else if (state is ScanOrderErrorState) {
+          Fluttertoast.showToast(msg: state.message);
+        }
+      },
+      child: Scaffold(
+        body: Column(
+          children: <Widget>[
+            Expanded(flex: 4, child: _buildQrView(context)),
+            Expanded(
+              flex: 1,
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    if (result != null)
+                      Text(
+                          'Barcode Type: ${result!.code.getType()}   Data: ${result!.code.getCode()}')
+                    else
+                      const Text('Scan a code'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          margin: const EdgeInsets.all(8),
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                await controller?.toggleFlash();
+                                setState(() {});
+                              },
+                              child: FutureBuilder(
+                                future: controller?.getFlashStatus(),
+                                builder: (context, snapshot) {
+                                  return Text('Flash: ${snapshot.data}');
+                                },
+                              )),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.all(8),
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                await controller?.flipCamera();
+                                setState(() {});
+                              },
+                              child: FutureBuilder(
+                                future: controller?.getCameraInfo(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.data != null) {
+                                    return Text(
+                                        'Camera facing ${describeEnum(snapshot.data!)}');
+                                  } else {
+                                    return const Text('loading');
+                                  }
+                                },
+                              )),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          margin: const EdgeInsets.all(8),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await controller?.pauseCamera();
+                            },
+                            child: const Text('pause',
+                                style: TextStyle(fontSize: 20)),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.all(8),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await controller?.resumeCamera();
+                            },
+                            child: const Text('resume',
+                                style: TextStyle(fontSize: 20)),
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -154,17 +171,8 @@ class _AddShipmentScreenState extends State<AddShipmentScreen> {
       setState(() {
         result = scanData;
       });
-       this.controller!.pauseCamera();
-      final bool = await context.read<AppCubit>().checkInvontry(
-          code: result!.code.getCode(), type: result!.code.getType()
-      );
-      if (bool) {
-        Fluttertoast.showToast(msg: "Added quantity successfuly");
-      } else {
-        Fluttertoast.showToast(
-            msg: "not found item with this tracking id or name");
-      }
-
+      this.controller!.pauseCamera();
+      context.read<AppCubit>().checkInvontry(code: result!.code.getCode());
     });
   }
 

@@ -1,4 +1,5 @@
 // ignore: depend_on_referenced_packages
+import 'dart:developer';
 import 'dart:io';
 
 // ignore: depend_on_referenced_packages
@@ -48,11 +49,15 @@ class AppCubit extends Cubit<AppState> {
   void signUp(
       {required String email,
       required String password,
-      required String username})async {
+      required String username}) async {
     emit(SignUpLoadingState());
-   final reponse=await FirebaseFirestore.instance.collection('users').doc(username).get();
-    if(reponse.exists){
-      emit(SignUpErrorState('Username is already taken please try other username'));
+    final reponse = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(username)
+        .get();
+    if (reponse.exists) {
+      emit(SignUpErrorState(
+          'Username is already taken please try other username'));
       return;
     }
     FirebaseAuth.instance
@@ -69,158 +74,249 @@ class AppCubit extends Cubit<AppState> {
     });
   }
 
-  final ImagePicker _picker=ImagePicker();
-   File? image;
-    String? url;
-  void pickImage()async{
-    final pick=await _picker.pickImage(source: ImageSource.gallery);
-    if(pick==null){
+  final ImagePicker _picker = ImagePicker();
+  File? image;
+  String? url;
+  void pickImage() async {
+    final pick = await _picker.pickImage(source: ImageSource.gallery);
+    if (pick == null) {
       return;
-    }else{
-      image=File(pick.path);
+    } else {
+      image = File(pick.path);
       uploadImage();
     }
   }
-  void uploadImage()async{
+
+  void uploadImage() async {
     emit(ImageLoadingState());
-    if(image!=null){
-   await firebase_storage.
-      FirebaseStorage.instance.ref().child('images/${image!.uri.pathSegments.last}')
-          .putFile(image as File).then((value)async {
-        url =await value.ref.getDownloadURL();
-             emit(ImageSuccessState());
-      }).catchError((e){
+    if (image != null) {
+      await firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child('images/${image!.uri.pathSegments.last}')
+          .putFile(image as File)
+          .then((value) async {
+        url = await value.ref.getDownloadURL();
+        emit(ImageSuccessState());
+      }).catchError((e) {
         emit(ImageErrorState(e.toString()));
       });
     }
   }
 
-  void addRecord(RecordModel model)async{
+  void addRecord(RecordModel model) async {
     emit(AddRecordLoadingState());
-    final String? email=await AppPrefreances().getEmail();
-    FirebaseFirestore.instance.collection('inventory').doc(email).collection('products').doc(model.name).set(model.toJson(model))
+    final String? email = await AppPrefreances().getEmail();
+    FirebaseFirestore.instance
+        .collection('inventory')
+        .doc(email)
+        .collection('products')
+        .doc(model.name)
+        .set(model.toJson(model))
         .then((value) {
       emit(AddRecordSuccessState());
-
-    }).catchError((e){
+    }).catchError((e) {
       emit(AddRecordErrorState(e.toString()));
-
     });
   }
-  void getRecords()async{
-    List<RecordModel> records=[];
-    final String? email=await AppPrefreances().getEmail();
+
+  void getRecords() async {
+    List<RecordModel> records = [];
+    final String? email = await AppPrefreances().getEmail();
 
     emit(GetRecordLoadingState());
-    FirebaseFirestore.instance.collection('inventory').doc(email).collection('products').get().then((value) {
-      for(int i=0;i<value.docs.length;i++){
+    FirebaseFirestore.instance
+        .collection('inventory')
+        .doc(email)
+        .collection('products')
+        .get()
+        .then((value) {
+      for (int i = 0; i < value.docs.length; i++) {
         records.add(RecordModel.fromJson(value.docs[i].data()));
       }
-      emit(GetRecordSuccessState(
-        records
-      ));
-    }).catchError((e){
+      emit(GetRecordSuccessState(records));
+    }).catchError((e) {
       emit(GetRecordErrorState(e.toString()));
     });
   }
 
- void getOrders(String name)async{
+  void getOrders(String name) async {
     emit(GetOrderLoadingState());
-   final String? email=await AppPrefreances().getEmail();
-  final response=await FirebaseFirestore.instance.collection('inventory').doc(email).collection('products').doc(name).collection('orders').get();
-   if(response.size!=0){
-     final List<OrderModel> orders=[];
-     final snap=response.docs;
-     for(int i=0;i<snap.length;i++){
-       orders.add(OrderModel.fromJson(snap[i].data()));
-       emit(GetOrderSuccessState(orders));
-     }
-
-   }else{
-     emit(GetOrderErrorState('No Orders Added yet'));
-   }
-
+    final String? email = await AppPrefreances().getEmail();
+    final response = await FirebaseFirestore.instance
+        .collection('inventory')
+        .doc(email)
+        .collection('products')
+        .doc(name)
+        .collection('orders')
+        .get();
+    if (response.size != 0) {
+      final List<OrderModel> orders = [];
+      final snap = response.docs;
+      for (int i = 0; i < snap.length; i++) {
+        orders.add(OrderModel.fromJson(snap[i].data()));
+        emit(GetOrderSuccessState(orders));
+      }
+    } else {
+      emit(GetOrderErrorState('No Orders Added yet'));
+    }
   }
 
-  void addOrders({
-    required String name,
-    required OrderModel model
-})async{
+  void addOrders({required String name, required OrderModel model}) async {
     emit(AddOrderLoadingState());
-    final String? email=await AppPrefreances().getEmail();
+    final String? email = await AppPrefreances().getEmail();
 
-    FirebaseFirestore.instance.collection('inventory').doc(email).collection('products').doc(name).collection('orders').doc().set(
-      OrderModel.toJson(model)
-    ).then((value) {
+    FirebaseFirestore.instance
+        .collection('inventory')
+        .doc(email)
+        .collection('products')
+        .doc(name)
+        .collection('orders')
+        .doc()
+        .set(OrderModel.toJson(model))
+        .then((value) {
       emit(AddOrderSuccessState());
-    }).catchError((e){
+    }).catchError((e) {
       emit(AddOrderErrorState(e.toString()));
-
     });
-
   }
 
   void editOrder({
     required String oldPlatform,
-   required String oldOrderId,
+    required String oldOrderId,
     required String oldTrackingId,
     required String name,
     required String newOrderId,
     required String newTrackingId,
     required String newPlatform,
     required bool deliveryStatus,
-})async{
+  }) async {
     emit(EditOrderLoadingState());
-    final email=await AppPrefreances().getEmail();
-   await FirebaseFirestore.instance.collection("inventory").doc(email)
-    .collection('products').doc(name).collection('orders')
-        .where('orderId',isEqualTo: oldOrderId).where('trackingId',isEqualTo: oldTrackingId).where('platform',isEqualTo: oldPlatform)
-       .get().then((value) {
-      FirebaseFirestore.instance.collection("inventory").doc(email)
-          .collection('products').doc(name).collection('orders').doc(value.docs[0].id).set({
-        'orderId':newOrderId,
-        'trackingId':newTrackingId,
-        'platform':newPlatform,
-        'deliveryStatus':deliveryStatus
+    final email = await AppPrefreances().getEmail();
+    await FirebaseFirestore.instance
+        .collection("inventory")
+        .doc(email)
+        .collection('products')
+        .doc(name)
+        .collection('orders')
+        .where('orderId', isEqualTo: oldOrderId)
+        .where('trackingId', isEqualTo: oldTrackingId)
+        .where('platform', isEqualTo: oldPlatform)
+        .get()
+        .then((value) {
+      FirebaseFirestore.instance
+          .collection("inventory")
+          .doc(email)
+          .collection('products')
+          .doc(name)
+          .collection('orders')
+          .doc(value.docs[0].id)
+          .set({
+        'orderId': newOrderId,
+        'trackingId': newTrackingId,
+        'platform': newPlatform,
+        'deliveryStatus': deliveryStatus
       });
       emit(EditOrderSuccessState());
-    }).catchError((e){
+    }).catchError((e) {
       emit(EditOrderErrorState(e.toString()));
     });
-
-
-
   }
 
+  void checkInvontry({required String code}) async {
+    emit(ScanOrderLoadingState());
+    try {
+      final testCode = '111';
+      final email = await AppPrefreances().getEmail();
+      QuerySnapshot<Map<String, dynamic>>? snap;
+      await FirebaseFirestore.instance
+          .collection('inventory')
+          .doc(email)
+          .collection("products")
+          .get()
+          .then(
+        (products) async {
+          for (var product in products.docs) {
+            snap = await FirebaseFirestore.instance
+                .collection("inventory")
+                .doc(email)
+                .collection('products')
+                .doc(product.id.toString())
+                .collection('orders')
+                .where('trackingId', isEqualTo: testCode)
+                .orderBy('orderDate', descending: true)
+                .get();
+          }
+        },
+      );
+      log(snap!.docs.length.toString());
+      if (snap!.docs.isNotEmpty) {
+        final firstItem = snap!.docs[0].data();
+        final model = OrderModel.fromJson(firstItem);
+        final secondModel = await FirebaseFirestore.instance
+            .collection('inventory')
+            .doc(email)
+            .collection("products")
+            .doc(model.name)
+            .get();
 
+        final recordModel = RecordModel.fromJson(secondModel.data()!);
 
-  Future<bool> checkInvontry({
-   required String code,
-    required String type
-          })async{
-     final email=await AppPrefreances().getEmail();
-   final snap = await  FirebaseFirestore.instance.
-     collection('inventory').doc(email).
-     collection("products").doc(type).collection("orders")
-        .where('trackingId',isEqualTo: code).get();
-    if(snap.size!=0){
-
-     FirebaseFirestore.instance.collection('inventory').doc(email).
-      collection("products").doc(type).get().then((value) {
-
-       FirebaseFirestore.instance.collection('inventory').doc(email).
-       collection("products").doc(type).set({
-         "image":value.data()!["image"],
-         "name":value.data()!["name"],
-         "quantity":(value.data()!["quantity"])+1
-       });
-
-    });
-     return true;
-         }
-    return false;
-  
+        emit(ScanOrderSuccessState(model, recordModel));
+      } else {
+        emit(ScanOrderErrorState('Item not found in databaseS'));
+      }
+    } catch (e) {
+      emit(ScanOrderErrorState('Error found'));
+    }
   }
 
+  void markAsDeleivered(bool isDeleivered, OrderModel model) async {
+    emit(DeliveryStatusLoadingState());
+    try {
+      if (isDeleivered) {
+        await FirebaseFirestore.instance
+            .collection('inventory')
+            .doc(email)
+            .collection("products")
+            .doc(model.name)
+            .get()
+            .then((value) {
+          print(value.data());
+          FirebaseFirestore.instance
+              .collection('inventory')
+              .doc(email)
+              .collection("products")
+              .doc(model.name)
+              .update({
+            'quantity':
+                value.data()!['quantity'] + int.parse(model.orderQuantity)
+          });
+        });
+      }
+      log('Found');
+      await FirebaseFirestore.instance
+          .collection('inventory')
+          .doc(email)
+          .collection("products")
+          .doc(model.name)
+          .collection('orders')
+          .where('trackingId', isEqualTo: model.trackingId)
+          .where('orderDate', isEqualTo: model.orderDate)
+          .get()
+          .then((value) {
+        FirebaseFirestore.instance
+            .collection('inventory')
+            .doc(email)
+            .collection("products")
+            .doc(model.name)
+            .collection('orders')
+            .doc(value.docs[0].id)
+            .update({'deliveryStatus': isDeleivered});
+      });
 
+      emit(DeliveryStatusSuccessState());
+    } catch (e) {
+      emit(DeliveryStatusErrorState(e.toString()));
+    }
+  }
 }

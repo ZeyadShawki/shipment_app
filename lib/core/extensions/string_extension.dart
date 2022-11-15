@@ -26,7 +26,7 @@ extension StringExtension on String? {
         }
       }
       int counter = 0;
-      while (counter <= 10) {
+      while (counter <= 8) {
         finalResult += this![startIndex + counter];
         counter++;
       }
